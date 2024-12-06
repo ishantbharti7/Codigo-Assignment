@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #3c5c99;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #f1c40f;
+            text-decoration: underline;
+        }
+        .navbar .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .navbar form {
+            display: flex;
+            align-items: center;
+        }
+        .navbar input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .navbar button {
+            padding: 5px 10px;
+            border: 1px solid #3498db;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Blog Section */
+        .blog-item {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .blog-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .blog-item h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .blog-item p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .blog-item a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .blog-item a:hover {
+            color: #2980b9;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .pagination a {
+            text-decoration: none;
+            margin: 0 12px;
+            padding: 8px 20px;
+            border: 2px solid #3498db;
+            border-radius: 25px;
+            background-color: white;
+            color: #3498db;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .navbar a {
+                margin-top: 10px;
+            }
+            .container {
+                padding: 0 10px;
+            }
+            .blog-item h3 {
+                font-size: 24px;
+            }
+            .pagination {
+                margin-top: 30px;
+            }
+            .pagination a {
+                margin: 0 8px;
+                padding: 6px 16px;
+            }
+        }
+
+        /* Add smooth page transition */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Tooltip for the Logout button */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%; /* Position above the button */
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="fade-in">
+    <div class="navbar">
+        <div class="brand">My Blog</div>
+        <div>
+            Welcome, {{ user.username }}
+            <div class="tooltip">
+                <a href="{% url 'logout' %}">Logout</a>
+                <span class="tooltiptext">Click to logout</span>
+            </div>
+            <a href="{% url 'new_blog' %}">New Blog</a>
+            <a href="{% url 'profile' %}">My Profile</a>
+            <!-- Search Form -->
+            <form action="{% url 'search_blog' %}" method="get" style="display: inline-block;">
+                <input type="text" name="query" placeholder="Search blogs..." value="{{ request.GET.query }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Latest Blogs</h2>
+        {% for blog in page_obj %}
+        <div class="blog-item">
+            <h3>{{ blog.title }}</h3>
+            <p>{{ blog.published_date }}</p>
+            <a href="{% url 'blog_detail' blog.slug %}">Read More</a>
+            <br>
+            <br>
+            <!-- Add Share Button -->
+            <a href="{% url 'share_blog' blog.slug %}" class="share-btn">Share</a>
+        </div>
+        {% endfor %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

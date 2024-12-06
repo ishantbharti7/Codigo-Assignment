@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Blog Item Styling */
+        .blog-item {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .blog-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .blog-item h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .blog-item p {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .blog-item a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .blog-item a:hover {
+            color: #2980b9;
+        }
+
+        /* No Results Styling */
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 40px;
+        }
+
+        /* Pagination Styling */
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pagination a {
+            text-decoration: none;
+            margin: 0 12px;
+            padding: 10px 20px;
+            border: 2px solid #3498db;
+            border-radius: 25px;
+            background-color: white;
+            color: #3498db;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+            .blog-item h3 {
+                font-size: 22px;
+            }
+            .pagination a {
+                margin: 0 8px;
+                padding: 8px 16px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <div>
+        {% if blogs %}
+            {% for blog in blogs %}
+                <div class="blog-item">
+                    <h3><a href="{% url 'blog_detail' blog.slug %}">{{ blog.title }}</a></h3>
+                    <p>{{ blog.content|truncatewords:50 }}</p>
+                    <p><small>{{ blog.published_date }}</small></p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-results">No blogs found for this search.</p>
+        {% endif %}
+    </div>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    </div>
+</body>
+</html>
